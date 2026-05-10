@@ -15,7 +15,13 @@ from PySide6.QtWidgets import (
 
 from controllers.category_controller import CategoryController
 from services.interfaces.category_service import ActivityCategoryManageDTO
-from ui.widgets.table_utils import configure_table, set_row_height, set_table_buttons, table_button
+from ui.widgets.table_utils import (
+    apply_table_column_resize,
+    configure_table,
+    set_row_height,
+    set_table_buttons,
+    table_button,
+)
 
 
 class AdminCategoryManageView(QWidget):
@@ -123,7 +129,7 @@ class AdminCategoryManageView(QWidget):
             set_table_buttons(self._table, row, 5, edit_button)
             set_table_buttons(self._table, row, 6, status_button)
 
-        self._table.resizeColumnsToContents()
+        apply_table_column_resize(self._table, tail_action_columns=2)
 
     def _edit_category(self, category: ActivityCategoryManageDTO) -> None:
         name, ok = QInputDialog.getText(self, "编辑分类", "分类名称：", text=category.name)

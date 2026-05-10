@@ -4,7 +4,7 @@ from PySide6.QtWidgets import QLabel, QMessageBox, QPushButton, QTableWidget, QT
 
 from controllers.review_controller import ReviewController
 from services.interfaces.review_service import ReviewDTO
-from ui.widgets.table_utils import configure_table, set_row_height, set_table_buttons, table_button
+from ui.widgets.table_utils import apply_table_column_resize, configure_table, set_row_height, set_table_buttons, table_button
 
 
 class AdminReviewManageView(QWidget):
@@ -64,7 +64,7 @@ class AdminReviewManageView(QWidget):
                 danger=True,
             )
             set_table_buttons(self._table, row, 7, delete_button)
-        self._table.resizeColumnsToContents()
+        apply_table_column_resize(self._table)
 
     def _delete_review(self, review_id: int) -> None:
         reply = QMessageBox.question(

@@ -4,7 +4,13 @@ from PySide6.QtWidgets import QComboBox, QLabel, QMessageBox, QPushButton, QTabl
 
 from controllers.user_controller import UserController
 from services.interfaces.user_service import UserDTO
-from ui.widgets.table_utils import configure_table, set_row_height, set_table_buttons, table_button
+from ui.widgets.table_utils import (
+    apply_table_column_resize,
+    configure_table,
+    set_row_height,
+    set_table_buttons,
+    table_button,
+)
 
 
 class AdminUserManageView(QWidget):
@@ -72,7 +78,7 @@ class AdminUserManageView(QWidget):
                 danger=user.status != "frozen",
             )
             set_table_buttons(self._table, row, 7, button)
-        self._table.resizeColumnsToContents()
+        apply_table_column_resize(self._table)
 
     def _toggle_user_status(self, user: UserDTO) -> None:
         if user.status == "frozen":

@@ -1,15 +1,67 @@
 from __future__ import annotations
 
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+
 from database.db import SessionLocal, initialize_database
+from models.activity_model import Activity, ActivityCategory
+from models.user_model import User
 from repositories.sqlite.sqlite_activity_category_repository import SQLiteActivityCategoryRepository
 from repositories.sqlite.sqlite_activity_repository import SQLiteActivityRepository
 from services.impl.activity_service_impl import ActivityServiceImpl
 from services.interfaces.auth_service import AuthenticatedUser
+from utils.datetime_utils import add_days, current_datetime
 from utils.permission_checker import PermissionChecker
+
+
+def _seed_minimal_online_activities(session: Session) -> None:
+    """为活动展示测试插入最小在线活动数据（不依赖 init_data 中的演示活动）。"""
+    publisher = session.scalar(select(User).where(User.account == "publisher"))
+    if publisher is None:
+        return
+    now = current_datetime()
+    cat_academic = session.scalar(select(ActivityCategory).where(ActivityCategory.name == "学术讲座"))
+    cat_volunteer = session.scalar(select(ActivityCategory).where(ActivityCategory.name == "志愿公益"))
+    if cat_academic is None or cat_volunteer is None:
+        return
+
+    def add_online_if_missing(title: str, category_id: int, checkin_code: str, location: str) -> None:
+        if session.scalar(select(Activity).where(Activity.title == title)) is not None:
+            return
+        session.add(
+            Activity(
+                publisher_id=publisher.id,
+                category_id=category_id,
+                title=title,
+                cover_image="",
+                description="测试用在线活动。",
+                start_time=add_days(now, 7),
+                end_time=add_days(now, 7, hours=2),
+                signup_start_time=now,
+                signup_end_time=add_days(now, 6),
+                location=location,
+                capacity=120,
+                signup_condition="全校学生均可报名",
+                need_signup_audit=False,
+                credit=1.0,
+                volunteer_hours=0.0,
+                status="online",
+                checkin_code=checkin_code,
+                checkin_method="code",
+                checkin_open=False,
+                reject_reason="",
+            )
+        )
+
+    add_online_if_missing("人工智能前沿讲座", cat_academic.id, "TESTAI01", "图书馆报告厅")
+    add_online_if_missing("志愿公益示例活动", cat_volunteer.id, "TESTVOL01", "校门口")
 
 
 def setup_module() -> None:
     initialize_database()
+    with SessionLocal() as session:
+        _seed_minimal_online_activities(session)
+        session.commit()
 
 
 def _service(session):

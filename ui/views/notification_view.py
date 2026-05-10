@@ -15,7 +15,7 @@ from PySide6.QtWidgets import (
 from controllers.notification_controller import NotificationController
 from services.interfaces.auth_service import AuthenticatedUser
 from services.interfaces.notification_service import NotificationDTO
-from ui.widgets.table_utils import configure_table, set_row_height
+from ui.widgets.table_utils import apply_table_column_resize, configure_table, set_row_height
 
 
 class NotificationView(QWidget):
@@ -92,7 +92,7 @@ class NotificationView(QWidget):
             for column, item in enumerate(items):
                 self._table.setItem(row, column, item)
 
-        self._table.resizeColumnsToContents()
+        apply_table_column_resize(self._table)
 
     def _get_selected_notification_id(self) -> int | None:
         selected_rows = self._table.selectionModel().selectedRows()

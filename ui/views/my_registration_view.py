@@ -13,7 +13,7 @@ from PySide6.QtWidgets import (
 
 from controllers.registration_controller import RegistrationController
 from services.interfaces.registration_service import RegistrationDTO
-from ui.widgets.table_utils import configure_table, set_row_height, set_table_buttons, table_button
+from ui.widgets.table_utils import apply_table_column_resize, configure_table, set_row_height, set_table_buttons, table_button
 
 
 class MyRegistrationView(QWidget):
@@ -92,7 +92,7 @@ class MyRegistrationView(QWidget):
             )
             set_table_buttons(self._table, row, 7, cancel_button)
 
-        self._table.resizeColumnsToContents()
+        apply_table_column_resize(self._table)
 
     def _cancel_registration(self, registration_id: int) -> None:
         reply = QMessageBox.question(

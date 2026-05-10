@@ -205,6 +205,25 @@ QTableWidget {
 QTableWidget::item {
     padding: 8px;
     border-bottom: 1px solid #eef2f7;
+    outline: none;
+}
+
+QTableWidget::item:focus,
+QTableWidget::item:selected:focus {
+    outline: none;
+    border-bottom: 1px solid #eef2f7;
+}
+
+QTableWidget::item:selected {
+    outline: none;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    border-bottom: 1px solid #eef2f7;
+}
+
+QTableWidget:focus {
+    outline: none;
 }
 
 QWidget#tableActionCell {

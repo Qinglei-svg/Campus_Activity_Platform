@@ -5,7 +5,7 @@ from PySide6.QtWidgets import QComboBox, QLabel, QMessageBox, QPushButton, QTabl
 from controllers.activity_controller import ActivityController
 from controllers.review_controller import ReviewController
 from services.interfaces.review_service import ReviewDTO
-from ui.widgets.table_utils import configure_table, set_row_height
+from ui.widgets.table_utils import apply_table_column_resize, configure_table, set_row_height
 
 
 class PublisherReviewView(QWidget):
@@ -90,4 +90,4 @@ class PublisherReviewView(QWidget):
             ]
             for column, value in enumerate(values):
                 self._table.setItem(row, column, QTableWidgetItem(value))
-        self._table.resizeColumnsToContents()
+        apply_table_column_resize(self._table)

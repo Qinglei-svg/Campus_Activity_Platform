@@ -18,7 +18,7 @@ from controllers.registration_controller import RegistrationController
 from controllers.report_appeal_controller import ReportAppealController
 from services.interfaces.activity_service import ActivityDTO
 from ui.views.report_submit_dialog import ReportSubmitDialog
-from ui.widgets.table_utils import configure_table, set_row_height, set_table_buttons, table_button
+from ui.widgets.table_utils import configure_table, set_row_height, set_table_buttons, table_button, apply_table_column_resize
 
 
 class PublisherRegistrationManageView(QWidget):
@@ -108,7 +108,7 @@ class PublisherRegistrationManageView(QWidget):
             set_table_buttons(self._table, row, 6, export_button)
             set_table_buttons(self._table, row, 7, report_button)
 
-        self._table.resizeColumnsToContents()
+        apply_table_column_resize(self._table, tail_action_columns=2)
 
     def _export_activity(self, activity_id: int) -> None:
         result = self._export_controller.export_activity_registration_excel(activity_id)

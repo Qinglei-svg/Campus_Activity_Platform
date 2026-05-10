@@ -13,7 +13,7 @@ from PySide6.QtWidgets import (
 
 from controllers.statistics_controller import StatisticsController
 from services.interfaces.statistics_service import AdminStatisticsDTO
-from ui.widgets.table_utils import configure_table, set_row_height
+from ui.widgets.table_utils import apply_table_column_resize, configure_table, set_row_height
 
 
 class AdminStatisticsView(QWidget):
@@ -89,7 +89,7 @@ class AdminStatisticsView(QWidget):
             set_row_height(self._category_table, row)
             self._category_table.setItem(row, 0, QTableWidgetItem(item.category_name))
             self._category_table.setItem(row, 1, QTableWidgetItem(str(item.activity_count)))
-        self._category_table.resizeColumnsToContents()
+        apply_table_column_resize(self._category_table)
 
         self._hot_table.setRowCount(len(statistics.hot_activities))
         for row, item in enumerate(statistics.hot_activities):
@@ -103,7 +103,7 @@ class AdminStatisticsView(QWidget):
             ]
             for column, value in enumerate(values):
                 self._hot_table.setItem(row, column, QTableWidgetItem(value))
-        self._hot_table.resizeColumnsToContents()
+        apply_table_column_resize(self._hot_table)
 
     def _clear_cards(self) -> None:
         while self._cards.count():

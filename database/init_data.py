@@ -3,10 +3,9 @@ from __future__ import annotations
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from models.activity_model import Activity, ActivityCategory
+from models.activity_model import ActivityCategory
 from models.role_model import Role, RolePermission
 from models.user_model import User
-from utils.datetime_utils import add_days, current_datetime
 from utils.password_utils import hash_password
 
 
@@ -24,6 +23,10 @@ DEFAULT_CATEGORIES = [
     ("校级活动", "学校层面的重点活动。"),
     ("其他", "未归入固定类型的校园活动。"),
 ]
+
+# 与 login_view 快速登录一致，清理数据时仅保留这些账号
+QUICK_LOGIN_ACCOUNTS = frozenset({"admin", "publisher", "student"})
+
 
 DEFAULT_PERMISSIONS = {
     "admin": [
@@ -66,9 +69,8 @@ DEFAULT_PERMISSIONS = {
 def initialize_default_data(session: Session) -> None:
     roles = _ensure_roles(session)
     _ensure_role_permissions(session, roles)
-    users = _ensure_users(session, roles)
-    categories = _ensure_categories(session)
-    _ensure_demo_activities(session, users["publisher"], categories)
+    _ensure_users(session, roles)
+    _ensure_categories(session)
     session.commit()
 
 
@@ -151,129 +153,3 @@ def _ensure_categories(session: Session) -> dict[str, ActivityCategory]:
             category.description = description
         categories[name] = category
     return categories
-
-
-def _ensure_demo_activities(
-    session: Session,
-    publisher: User,
-    categories: dict[str, ActivityCategory],
-) -> None:
-    now = current_datetime()
-    demo_activities = [
-        {
-            "title": "人工智能前沿讲座",
-            "category": "学术讲座",
-            "description": "围绕生成式人工智能、校园创新实践和未来职业发展进行分享。",
-            "start_time": add_days(now, 7),
-            "end_time": add_days(now, 7, hours=2),
-            "signup_start_time": now,
-            "signup_end_time": add_days(now, 6),
-            "location": "图书馆报告厅",
-            "capacity": 120,
-            "signup_condition": "全校学生均可报名",
-            "need_signup_audit": False,
-            "credit": 1.0,
-            "volunteer_hours": 0.0,
-            "status": "online",
-            "checkin_code": "AI2026",
-        },
-        {
-            "title": "校园志愿服务活动",
-            "category": "志愿公益",
-            "description": "组织学生参与校园环境维护、秩序引导和公益宣传服务。",
-            "start_time": add_days(now, 10),
-            "end_time": add_days(now, 10, hours=3),
-            "signup_start_time": now,
-            "signup_end_time": add_days(now, 9),
-            "location": "校门口志愿服务站",
-            "capacity": 60,
-            "signup_condition": "热心公益的在校学生",
-            "need_signup_audit": False,
-            "credit": 0.5,
-            "volunteer_hours": 3.0,
-            "status": "online",
-            "checkin_code": "VOL2026",
-        },
-        {
-            "title": "社团招新宣讲会",
-            "category": "社团活动",
-            "description": "社团联合会面向新生介绍社团类型、报名方式和活动安排。",
-            "start_time": add_days(now, 14),
-            "end_time": add_days(now, 14, hours=2),
-            "signup_start_time": add_days(now, 1),
-            "signup_end_time": add_days(now, 13),
-            "location": "大学生活动中心",
-            "capacity": 200,
-            "signup_condition": "对社团活动感兴趣的学生",
-            "need_signup_audit": True,
-            "credit": 0.5,
-            "volunteer_hours": 0.0,
-            "status": "pending_review",
-            "checkin_code": "CLUB2026",
-        },
-        {
-            "title": "校园科技节开幕活动",
-            "category": "校级活动",
-            "description": "科技节开幕式及优秀学生项目展示。",
-            "start_time": add_days(now, 21),
-            "end_time": add_days(now, 21, hours=3),
-            "signup_start_time": add_days(now, 5),
-            "signup_end_time": add_days(now, 20),
-            "location": "综合体育馆",
-            "capacity": 300,
-            "signup_condition": "全校学生均可报名",
-            "need_signup_audit": False,
-            "credit": 1.0,
-            "volunteer_hours": 0.0,
-            "status": "draft",
-            "checkin_code": "TECH2026",
-        },
-        {
-            "title": "校园志愿服务总结会",
-            "category": "志愿公益",
-            "description": "已结束的志愿服务总结和经验分享活动。",
-            "start_time": add_days(now, -10),
-            "end_time": add_days(now, -10, hours=2),
-            "signup_start_time": add_days(now, -20),
-            "signup_end_time": add_days(now, -11),
-            "location": "综合楼 205",
-            "capacity": 80,
-            "signup_condition": "志愿服务队成员",
-            "need_signup_audit": False,
-            "credit": 1.0,
-            "volunteer_hours": 2.0,
-            "status": "finished",
-            "checkin_code": "DONE2026",
-        },
-    ]
-
-    for data in demo_activities:
-        existing = session.scalar(select(Activity).where(Activity.title == data["title"]))
-        if existing is not None:
-            continue
-
-        category = categories[data["category"]]
-        session.add(
-            Activity(
-                publisher_id=publisher.id,
-                category_id=category.id,
-                title=data["title"],
-                cover_image="",
-                description=data["description"],
-                start_time=data["start_time"],
-                end_time=data["end_time"],
-                signup_start_time=data["signup_start_time"],
-                signup_end_time=data["signup_end_time"],
-                location=data["location"],
-                capacity=data["capacity"],
-                signup_condition=data["signup_condition"],
-                need_signup_audit=data["need_signup_audit"],
-                credit=data["credit"],
-                volunteer_hours=data["volunteer_hours"],
-                status=data["status"],
-                checkin_code=data["checkin_code"],
-                checkin_method="code",
-                checkin_open=False,
-                reject_reason="",
-            )
-        )

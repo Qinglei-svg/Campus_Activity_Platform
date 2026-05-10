@@ -17,7 +17,7 @@ from controllers.checkin_controller import CheckinController
 from controllers.statistics_controller import StatisticsController
 from services.interfaces.checkin_service import CheckinRecordDTO
 from services.interfaces.statistics_service import ActivityCalendarEventDTO, ParticipantStatisticsDTO
-from ui.widgets.table_utils import configure_table, set_row_height
+from ui.widgets.table_utils import apply_table_column_resize, configure_table, set_row_height
 
 
 class ParticipantCenterView(QWidget):
@@ -96,7 +96,7 @@ class ParticipantCenterView(QWidget):
             ]
             for column, value in enumerate(values):
                 self._table.setItem(row, column, QTableWidgetItem(value))
-        self._table.resizeColumnsToContents()
+        apply_table_column_resize(self._table)
 
     def _load_statistics(self) -> None:
         if self._statistics_controller is None:

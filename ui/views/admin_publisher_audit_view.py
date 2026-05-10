@@ -4,7 +4,7 @@ from PySide6.QtWidgets import QInputDialog, QLabel, QMessageBox, QPushButton, QT
 
 from controllers.user_controller import UserController
 from services.interfaces.user_service import PublisherApplicationDTO
-from ui.widgets.table_utils import configure_table, set_row_height, set_table_buttons, table_button
+from ui.widgets.table_utils import apply_table_column_resize, configure_table, set_row_height, set_table_buttons, table_button
 
 
 class AdminPublisherAuditView(QWidget):
@@ -74,7 +74,7 @@ class AdminPublisherAuditView(QWidget):
                 enabled=application.status == "pending",
             )
             set_table_buttons(self._table, row, 9, approve_button, reject_button)
-        self._table.resizeColumnsToContents()
+        apply_table_column_resize(self._table)
 
     def _approve(self, application_id: int) -> None:
         result = self._user_controller.approve_publisher_application(application_id)

@@ -16,7 +16,7 @@ from PySide6.QtWidgets import (
 
 from controllers.activity_controller import ActivityController
 from services.interfaces.activity_service import ActivityDTO
-from ui.widgets.table_utils import configure_table, set_row_height, set_table_buttons, table_button
+from ui.widgets.table_utils import apply_table_column_resize, configure_table, set_row_height, set_table_buttons, table_button
 
 
 class ActivityHallView(QWidget):
@@ -136,4 +136,4 @@ class ActivityHallView(QWidget):
             )
             set_table_buttons(self._table, row, 8, detail_button)
 
-        self._table.resizeColumnsToContents()
+        apply_table_column_resize(self._table)

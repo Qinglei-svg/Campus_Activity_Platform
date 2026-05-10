@@ -15,7 +15,7 @@ from PySide6.QtWidgets import (
 
 from controllers.report_appeal_controller import ReportAppealController
 from services.interfaces.report_appeal_service import ReportAppealDTO
-from ui.widgets.table_utils import configure_table, set_row_height, set_table_buttons, table_button
+from ui.widgets.table_utils import apply_table_column_resize, configure_table, set_row_height, set_table_buttons, table_button
 
 
 class AdminReportAppealManageView(QWidget):
@@ -109,7 +109,7 @@ class AdminReportAppealManageView(QWidget):
             set_table_buttons(self._table, row, 8, punish_button)
             set_table_buttons(self._table, row, 9, ignore_button)
 
-        self._table.resizeColumnsToContents()
+        apply_table_column_resize(self._table, tail_action_columns=2)
 
     def _punish(self, report_id: int) -> None:
         reply = QMessageBox.question(

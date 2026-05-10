@@ -15,7 +15,7 @@ from PySide6.QtWidgets import (
 
 from controllers.audit_log_controller import AuditLogController
 from services.interfaces.audit_log_service import AuditLogDTO
-from ui.widgets.table_utils import configure_table, set_row_height
+from ui.widgets.table_utils import apply_table_column_resize, configure_table, set_row_height
 
 
 class AdminAuditLogView(QWidget):
@@ -109,7 +109,7 @@ class AdminAuditLogView(QWidget):
             ]
             for column, value in enumerate(values):
                 self._table.setItem(row, column, QTableWidgetItem(value))
-        self._table.resizeColumnsToContents()
+        apply_table_column_resize(self._table)
 
     def _reset_filters(self) -> None:
         self._action_filter.setCurrentIndex(0)

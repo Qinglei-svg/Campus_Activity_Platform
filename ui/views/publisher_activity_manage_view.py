@@ -19,7 +19,7 @@ from controllers.activity_controller import ActivityController
 from controllers.statistics_controller import StatisticsController
 from services.interfaces.activity_service import ActivityDTO
 from services.interfaces.statistics_service import ActivityCalendarEventDTO, PublisherStatisticsDTO
-from ui.widgets.table_utils import configure_table, set_row_height, set_table_buttons, table_button
+from ui.widgets.table_utils import configure_table, set_row_height, set_table_buttons, table_button, apply_table_column_resize
 
 
 class PublisherActivityManageView(QWidget):
@@ -78,9 +78,21 @@ class PublisherActivityManageView(QWidget):
         self._empty_label = QLabel("暂无活动")
         self._empty_label.setObjectName("placeholderHint")
 
-        self._table = QTableWidget(0, 10)
+        self._table = QTableWidget(0, 11)
         self._table.setHorizontalHeaderLabels(
-            ["活动标题", "分类", "活动时间", "地点", "容量", "当前状态", "驳回原因", "更新时间", "查看详情", "操作"]
+            [
+                "活动标题",
+                "分类",
+                "活动时间",
+                "地点",
+                "容量",
+                "当前状态",
+                "驳回原因",
+                "更新时间",
+                "查看详情",
+                "编辑草稿",
+                "提交审核",
+            ]
         )
         self._table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
         self._table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
@@ -151,9 +163,10 @@ class PublisherActivityManageView(QWidget):
                 enabled=activity.status in {"draft", "rejected"},
             )
             set_table_buttons(self._table, row, 8, detail_button)
-            set_table_buttons(self._table, row, 9, edit_button, submit_button)
+            set_table_buttons(self._table, row, 9, edit_button)
+            set_table_buttons(self._table, row, 10, submit_button)
 
-        self._table.resizeColumnsToContents()
+        apply_table_column_resize(self._table, tail_action_columns=3)
 
     def _load_statistics(self) -> None:
         if self._statistics_controller is None:

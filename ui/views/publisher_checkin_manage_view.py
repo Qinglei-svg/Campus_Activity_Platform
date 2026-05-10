@@ -21,7 +21,7 @@ from controllers.activity_controller import ActivityController
 from controllers.checkin_controller import CheckinController
 from services.interfaces.activity_service import ActivityDTO
 from services.interfaces.checkin_service import CheckinRecordDTO
-from ui.widgets.table_utils import configure_table, set_row_height, set_table_buttons, table_button
+from ui.widgets.table_utils import configure_table, set_row_height, set_table_buttons, table_button, apply_table_column_resize
 
 
 class PublisherCheckinManageView(QWidget):
@@ -141,7 +141,7 @@ class PublisherCheckinManageView(QWidget):
                 enabled=item.registration_id is not None,
             )
             set_table_buttons(self._table, row, 7, correct_button)
-        self._table.resizeColumnsToContents()
+        apply_table_column_resize(self._table)
 
     def _correct_checkin(self, registration_id: int | None) -> None:
         if registration_id is None:

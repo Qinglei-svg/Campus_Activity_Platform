@@ -1,7 +1,11 @@
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
+
+# 由 tests/conftest 在 import 本模块前设置，使 pytest 不污染开发用 data/ 目录
+_TEST_DATA_DIR_ENV = "CAMPUS_ACTIVITY_TEST_DATA_DIR"
 
 
 def _resource_base_dir() -> Path:
@@ -11,6 +15,9 @@ def _resource_base_dir() -> Path:
 
 
 def _runtime_base_dir() -> Path:
+    test_root = os.environ.get(_TEST_DATA_DIR_ENV)
+    if test_root:
+        return Path(test_root)
     if getattr(sys, "frozen", False):
         return Path(sys.executable).resolve().parent
     return Path(__file__).resolve().parent.parent

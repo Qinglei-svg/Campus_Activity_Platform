@@ -6,7 +6,7 @@ from PySide6.QtWidgets import QLabel, QMessageBox, QPushButton, QTableWidget, QT
 
 from controllers.certificate_controller import CertificateController
 from services.interfaces.certificate_service import CertificateDTO
-from ui.widgets.table_utils import configure_table, set_row_height, set_table_buttons, table_button
+from ui.widgets.table_utils import apply_table_column_resize, configure_table, set_row_height, set_table_buttons, table_button
 
 
 class MyCertificateView(QWidget):
@@ -70,7 +70,7 @@ class MyCertificateView(QWidget):
                 lambda file_path=certificate.file_path: self._open_certificate(file_path),
             )
             set_table_buttons(self._table, row, 4, open_button)
-        self._table.resizeColumnsToContents()
+        apply_table_column_resize(self._table)
 
     def _open_certificate(self, file_path) -> None:
         if not file_path.exists():

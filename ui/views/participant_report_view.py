@@ -4,7 +4,7 @@ from PySide6.QtWidgets import QLabel, QMessageBox, QPushButton, QTableWidget, QT
 
 from controllers.report_appeal_controller import ReportAppealController
 from services.interfaces.report_appeal_service import ReportAppealDTO
-from ui.widgets.table_utils import configure_table, set_row_height
+from ui.widgets.table_utils import apply_table_column_resize, configure_table, set_row_height
 
 
 class ParticipantReportView(QWidget):
@@ -63,7 +63,7 @@ class ParticipantReportView(QWidget):
             ]
             for column, value in enumerate(values):
                 self._table.setItem(row, column, QTableWidgetItem(value))
-        self._table.resizeColumnsToContents()
+        apply_table_column_resize(self._table)
 
     def _status_text(self, status: str) -> str:
         return {"pending": "待处理", "punished": "已处罚", "ignored": "不做处理"}.get(status, status)
