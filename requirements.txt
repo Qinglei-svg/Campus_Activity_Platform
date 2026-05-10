@@ -1,0 +1,8 @@
+PySide6
+SQLAlchemy>=2.0
+bcrypt
+openpyxl
+qrcode
+reportlab
+pytest
+pyinstaller
