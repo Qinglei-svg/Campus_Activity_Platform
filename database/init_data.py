@@ -67,10 +67,13 @@ DEFAULT_PERMISSIONS = {
 
 
 def initialize_default_data(session: Session) -> None:
+    from database.seed_comprehensive_demo import seed_comprehensive_demo_if_needed
+
     roles = _ensure_roles(session)
     _ensure_role_permissions(session, roles)
-    _ensure_users(session, roles)
-    _ensure_categories(session)
+    users = _ensure_users(session, roles)
+    categories = _ensure_categories(session)
+    seed_comprehensive_demo_if_needed(session, roles, users, categories)
     session.commit()
 
 
